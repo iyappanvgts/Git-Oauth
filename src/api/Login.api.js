@@ -45,7 +45,7 @@ export const getAccessToken = async (code) => {
     throw new Error("Failed to get access token from GitHub");
   }
 };
-export const getRepo = async (orgName) => {
+export const getRepo = async (orgName, userRepoName) => {
   try {
     const response = await axios({
       method: "GET",
@@ -53,7 +53,7 @@ export const getRepo = async (orgName) => {
       headers: {
         Accept: "application/json",
       },
-      params: { orgName },
+      params: { orgName, userRepoName },
     });
 
     const Res = response.data;
