@@ -45,6 +45,8 @@ const LayoutPage = () => {
     orgName,
     userRepo,
     RepoRefetch,
+    userRepoName,
+    setUserRepoName,
   } = usePageInfo();
   const [collapsed, setCollapsed] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("1");
@@ -66,12 +68,12 @@ const LayoutPage = () => {
     data: OrgsData,
     refetch: orgsFetch,
     isLoading: orgsLoading,
-  } = useQuery(["orgData"], () => getOrgs(), {
+  } = useQuery(["orgData", orgName], () => getOrgs(), {
     enabled: true,
     retry: true,
     onSuccess: (OrgsData) => {
-      if (OrgsData) {
-        setOrgName(OrgsData[0]?.login);
+      if (OrgsData && !orgName && userRepoName) {
+        setUserRepoName(OrgsData[1]?.login);
         RepoRefetch();
       }
     },
@@ -290,13 +292,22 @@ const LayoutPage = () => {
                   key={obj?.login}
                   className="flex items-center justify-start ml-5 mb-2 cursor-pointer"
                   onClick={() => {
-                    setOrgName(obj?.login);
+                    {
+                      if (obj?.typeOrg) {
+                        setOrgName(obj?.login);
+                        setUserRepoName("");
+                        // RepoRefetch();
+                      } else {
+                        setOrgName("");
+                        setUserRepoName(obj?.login);
+                        // RepoRefetch();
+                      }
+                    }
                     navigate("/home");
-                    RepoRefetch();
                   }}
                 >
                   <img
-                    src={avtarSvg}
+                    src={obj?.typeOrg ? avtarSvg : obj?.avatar_url}
                     gi
                     className="h-[27px] w-[27px] rounded-full mr-4"
                     alt="profile"
@@ -311,7 +322,7 @@ const LayoutPage = () => {
                     onClick={() => {
                       setOrgName(obj?.login);
                       navigate("/home");
-                      RepoRefetch();
+                      // RepoRefetch();
                     }}
                   >
                     {obj?.login}

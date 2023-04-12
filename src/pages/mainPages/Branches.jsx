@@ -36,7 +36,7 @@ export default function Branches() {
       },
     }
   );
-  const list = data || [];
+  const list = data;
   const {
     data: commitData,
     isLoading,
@@ -44,6 +44,17 @@ export default function Branches() {
   } = useQuery(["commit", branch, sha], () => getCommits(branch, sha), {
     enabled: false,
     retry: false,
+    onSuccess: () => {
+      if (!branch && !sha) {
+        navigate("/home");
+      }
+    },
+    onError: (commitFetch) => {
+      if (!branch && !sha) {
+        commitFetch();
+      }
+      navigate("/home");
+    },
   });
   const date = commitData
     ? moment(commitData[0]?.commit?.author?.date)

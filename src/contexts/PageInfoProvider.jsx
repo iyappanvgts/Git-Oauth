@@ -12,17 +12,22 @@ export default function PageInfoProvider(props) {
   const [userName, setUserName] = useState("");
   const [reponame, setrepoName] = useState("");
   const [orgName, setOrgName] = useState("");
+  const [userRepoName, setUserRepoName] = useState("");
   const {
     data: userRepo,
     isFetching: isRepoFetching,
     refetch: RepoRefetch,
-  } = useQuery(["orgsRepo", orgName], () => getRepo(orgName), {
-    enabled: false,
-    retry: false,
-    onError: (RepoRefetch) => {
-      RepoRefetch();
-    },
-  });
+  } = useQuery(
+    ["orgsRepo", orgName, userRepoName],
+    () => getRepo(orgName, userRepoName),
+    {
+      enabled: false,
+      retry: false,
+      onError: (RepoRefetch) => {
+        RepoRefetch();
+      },
+    }
+  );
   return (
     <PageInfoContext.Provider
       value={{
@@ -45,6 +50,8 @@ export default function PageInfoProvider(props) {
         userRepo,
         RepoRefetch,
         isRepoFetching,
+        userRepoName,
+        setUserRepoName,
       }}
     >
       {props.children}
